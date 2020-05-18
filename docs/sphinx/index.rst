@@ -3,7 +3,13 @@
 dsbuilder
 =========
 
+API Documentation
+~~~~~~~~~~~~~~~~~
 
+.. toctree::
+   :maxdepth: 3
+
+   content/API/dsbuilder
 
 Indices and tables
 ==================
