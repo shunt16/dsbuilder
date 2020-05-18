@@ -17,11 +17,10 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(name='dsbuilder',
       version=__version__,
-      description='',
-      authors='',
+      description='creating datasets, to specification',
+      authors='Sam Hunt',
       long_description=long_description,
-      author_email='',
-      url='',
+      url='https://dsbuilder.readthedocs.io',
       packages=find_packages(exclude=['contrib', 'docs', 'tests']),
       install_requires=[],
       entry_points={
