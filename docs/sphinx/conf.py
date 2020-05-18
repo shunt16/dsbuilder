@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# template_python_module documentation build configuration file, created by
+# dsbuilder documentation build configuration file, created by
 # sphinx-quickstart on Friday March 20 2020.
 #
 # This file is execfile()d with the current directory set to its
@@ -18,7 +18,7 @@
 
 import os
 import sys
-from template_python_module.version import __version__
+from dsbuilder.version import __version__
 sys.path.insert(0, os.path.abspath('sphinx'))
 
 
@@ -32,7 +32,7 @@ def run_apidoc(_):
         "-M",
         "-o",
         "./content/API",
-        "./../../template_python_module",
+        "./../../dsbuilder",
     ] + ignore_paths
 
     try:
@@ -79,9 +79,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'template_python_module'
-copyright = u'this_year, author_name'
-author = u'author_name'
+project = u'dsbuilder'
+copyright = u'2020, Sam Hunt'
+author = u'Sam Hunt'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,7 +164,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'template_python_module v0.1'
+# html_title = u'dsbuilder v0.1'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -270,7 +270,7 @@ html_context = {
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'template_python_moduledocs'
+htmlhelp_basename = 'dsbuilder_docs'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -296,8 +296,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'template_python_module.tex', u'template_python_module Documentation',
-     u'author_name', 'manual'),
+    (master_doc, 'dsbuilder.tex', u'dsbuilder Documentation',
+     u'Sam Hunt', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -338,7 +338,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'template_python_module', u'template_python_module Documentation',
+    (master_doc, 'dsbuilder', u'dsbuilder Documentation',
      [author], 1)
 ]
 
@@ -353,8 +353,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'template_python_module', u'template_python_module Documentation',
-     author, 'template_python_module', 'One line description of project.',
+    (master_doc, 'dsbuilder', u'dsbuilder Documentation',
+     author, 'dsbuilder', 'One line description of project.',
      'Miscellaneous'),
 ]
 

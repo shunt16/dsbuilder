@@ -8,14 +8,14 @@ from setuptools import find_packages, setup
 # but avoids importing the module which may not be installed yet:
 __version__ = None
 here = path.abspath(path.dirname(__file__))
-with open('template_python_module/version.py') as f:
+with open('dsbuilder/version.py') as f:
     exec(f.read())
 
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-setup(name='template_python_module',
+setup(name='dsbuilder',
       version=__version__,
       description='',
       authors='',

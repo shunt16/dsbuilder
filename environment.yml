@@ -8,7 +8,10 @@ dependencies:
   #
   # dependencies (in alphabetical order)
   #
-  # add required modules here
+  - numpy >= 1.18.1
+  - scipy >= 1.4.1
+  - netcdf4 >= 1.5.3
+  - xarray >=0.8.2
   #
   # for testing only
   #
