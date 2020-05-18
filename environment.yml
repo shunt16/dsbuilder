@@ -1,5 +1,5 @@
 
-name: hypernets_processor
+name: dsbuilder
 channels:
   - conda-forge
   - defaults

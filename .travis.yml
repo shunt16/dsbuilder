@@ -22,7 +22,7 @@ install:
   - conda info -a
 
   - conda env create --file environment.yml
-  - source activate hypernets_processor
+  - source activate dsbuilder
 
 script:
   # For the unit-tests, disable Numba JIT, otherwise Coverage wont reach the actual Python code
