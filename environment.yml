@@ -1,0 +1,16 @@
+
+name: hypernets_processor
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7*
+  #
+  # dependencies (in alphabetical order)
+  #
+  # add required modules here
+  #
+  # for testing only
+  #
+  - pytest >=5.4.1
+  - pytest-cov >=2.8.1

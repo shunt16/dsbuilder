@@ -1,0 +1,10 @@
+# required modules
+# add required modules here
+
+# for testing only
+pytest >=5.4.1
+pytest-cov >=2.8.1
+
+# for docs
+sphinx
+sphinx-rtd-theme
