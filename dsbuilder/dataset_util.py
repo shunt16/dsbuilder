@@ -8,7 +8,7 @@ from xarray import Variable, DataArray
 import numpy as np
 
 
-'''___Authorship___'''
+"""___Authorship___"""
 __author__ = "Sam Hunt"
 __created__ = "18/5/2020"
 __version__ = __version__
@@ -16,7 +16,9 @@ __maintainer__ = "Sam Hunt"
 __email__ = "sam.hunt@npl.co.uk"
 __status__ = "Development"
 
-DEFAULT_DIM_NAMES = list(string.ascii_lowercase[-3:]) + list(string.ascii_lowercase[:-3])
+DEFAULT_DIM_NAMES = list(string.ascii_lowercase[-3:]) + list(
+    string.ascii_lowercase[:-3]
+)
 DEFAULT_DIM_NAMES.reverse()
 
 
@@ -54,12 +56,16 @@ class DatasetUtil:
         if dim_names is not None:
             default_array = DataArray(empty_array, dims=dim_names)
         else:
-            default_array = DataArray(empty_array, dims=DEFAULT_DIM_NAMES[-len(dim_sizes):])
+            default_array = DataArray(
+                empty_array, dims=DEFAULT_DIM_NAMES[-len(dim_sizes) :]
+            )
 
         return default_array
 
     @staticmethod
-    def create_variable(dim_sizes, dtype, dim_names=None, attributes=None, fill_value=None):
+    def create_variable(
+        dim_sizes, dtype, dim_names=None, attributes=None, fill_value=None
+    ):
         """
         Return default empty xarray Variable
 
@@ -81,14 +87,16 @@ class DatasetUtil:
         :return: Default empty variable
         :rtype: xarray.Variable
         """
-        
+
         if fill_value is None:
             fill_value = DatasetUtil.get_default_fill_value(dtype)
-        
-        default_array = DatasetUtil.create_default_array(dim_sizes, dtype, fill_value=fill_value)
+
+        default_array = DatasetUtil.create_default_array(
+            dim_sizes, dtype, fill_value=fill_value
+        )
 
         if dim_names is None:
-            variable = Variable(DEFAULT_DIM_NAMES[-len(dim_sizes):], default_array)
+            variable = Variable(DEFAULT_DIM_NAMES[-len(dim_sizes) :], default_array)
         else:
             variable = Variable(dim_names, default_array)
 
@@ -121,12 +129,19 @@ class DatasetUtil:
 
         data_type = DatasetUtil.return_flags_dtype(n_masks)
 
-        variable = DatasetUtil.create_variable(dim_sizes, data_type, dim_names=dim_names, fill_value=0,
-                                               attributes=attributes)
+        variable = DatasetUtil.create_variable(
+            dim_sizes,
+            data_type,
+            dim_names=dim_names,
+            fill_value=0,
+            attributes=attributes,
+        )
 
         # add flag attributes
-        variable.attrs["flag_meanings"] = str(meanings)[1:-1].replace("'","").replace(",","")
-        variable.attrs["flag_masks"] = str([2**i for i in range(0, n_masks)])[1:-1]
+        variable.attrs["flag_meanings"] = (
+            str(meanings)[1:-1].replace("'", "").replace(",", "")
+        )
+        variable.attrs["flag_masks"] = str([2 ** i for i in range(0, n_masks)])[1:-1]
 
         # todo - make sure flags can't have units
 
@@ -154,7 +169,9 @@ class DatasetUtil:
             return np.uint64
 
     @staticmethod
-    def add_encoding(variable, dtype, scale_factor=1.0, offset=0.0, fill_value=None, chunksizes=None):
+    def add_encoding(
+        variable, dtype, scale_factor=1.0, offset=0.0, fill_value=None, chunksizes=None
+    ):
         """
         Add encoding to xarray Variable to apply when writing netCDF files
 
@@ -179,13 +196,17 @@ class DatasetUtil:
 
         # todo - make sure flags can't have encoding added
 
-        encoding_dict = {'dtype': dtype, 'scale_factor': scale_factor, 'add_offset': offset}
+        encoding_dict = {
+            "dtype": dtype,
+            "scale_factor": scale_factor,
+            "add_offset": offset,
+        }
 
         if chunksizes is not None:
-            encoding_dict.update({'chunksizes': chunksizes})
+            encoding_dict.update({"chunksizes": chunksizes})
 
         if fill_value is not None:
-            encoding_dict.update({'_FillValue': fill_value})
+            encoding_dict.update({"_FillValue": fill_value})
 
         variable.encoding = encoding_dict
 
@@ -216,9 +237,9 @@ class DatasetUtil:
         elif dtype == np.int64:
             return np.int64(-9223372036854775806)
         elif dtype == np.float32:
-            return np.float32(9.96921E36)
+            return np.float32(9.96921e36)
         elif dtype == np.float64:
-            return np.float64(9.969209968386869E36)
+            return np.float64(9.969209968386869e36)
 
 
 if __name__ == "__main__":
