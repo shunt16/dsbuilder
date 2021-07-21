@@ -19,7 +19,8 @@
 import os
 import sys
 from dsbuilder.version import __version__
-sys.path.insert(0, os.path.abspath('sphinx'))
+
+sys.path.insert(0, os.path.abspath("sphinx"))
 
 
 def run_apidoc(_):
@@ -38,15 +39,19 @@ def run_apidoc(_):
     try:
         # Sphinx 1.7+
         from sphinx.ext import apidoc
+
         apidoc.main(argv)
     except ImportError:
         # Sphinx 1.6 (and earlier)
         from sphinx import apidoc
+
         argv.insert(0, apidoc.__file__)
         apidoc.main(argv)
 
+
 def setup(app):
-    app.connect('builder-inited', run_apidoc)
+    app.connect("builder-inited", run_apidoc)
+
 
 # -- General configuration ------------------------------------------------
 
@@ -58,30 +63,30 @@ def setup(app):
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.mathjax',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.mathjax",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'dsbuilder'
-copyright = u'2020, Sam Hunt'
-author = u'Sam Hunt'
+project = u"dsbuilder"
+copyright = u"2020, Sam Hunt"
+author = u"Sam Hunt"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -133,7 +138,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -150,7 +155,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -184,13 +189,13 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 html_context = {
-    'css_files': [
-        '_static/theme_overrides.css',  # override wide tables in RTD theme
-        ],
-     }
+    "css_files": [
+        "_static/theme_overrides.css",  # override wide tables in RTD theme
+    ],
+}
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -270,34 +275,37 @@ html_context = {
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'dsbuilder_docs'
+htmlhelp_basename = "dsbuilder_docs"
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
-
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
-
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
-
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'dsbuilder.tex', u'dsbuilder Documentation',
-     u'Sam Hunt', 'manual'),
+    (master_doc, "dsbuilder.tex", u"dsbuilder Documentation", u"Sam Hunt", "manual"),
+    (
+        "content/test",
+        "dsbuilder_pfs.tex",
+        u"dsbuilder Product Format Specification",
+        u"Sam Hunt",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -337,10 +345,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'dsbuilder', u'dsbuilder Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "dsbuilder", u"dsbuilder Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -353,9 +358,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'dsbuilder', u'dsbuilder Documentation',
-     author, 'dsbuilder', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "dsbuilder",
+        u"dsbuilder Documentation",
+        author,
+        "dsbuilder",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
