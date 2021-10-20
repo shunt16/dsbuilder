@@ -1,1 +1,2 @@
 from dsbuilder.template_util import create_template_dataset
+from dsbuilder.dsbuilder import DSBuilder
