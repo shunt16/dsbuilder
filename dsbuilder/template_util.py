@@ -7,7 +7,7 @@ from dsbuilder.dataset_util import DatasetUtil
 import xarray
 
 
-'''___Authorship___'''
+"""___Authorship___"""
 __author__ = "Sam Hunt"
 __created__ = "18/5/2020"
 __version__ = __version__
@@ -81,23 +81,36 @@ class TemplateUtil:
             # Unpack variable attributes
             dtype = variable_attrs["dtype"]
             dim_names = variable_attrs["dim"]
-            attributes = variable_attrs["attributes"] if "attributes" in variable_attrs else None
+            attributes = (
+                variable_attrs["attributes"] if "attributes" in variable_attrs else None
+            )
 
             # Determine variable shape from dims
             try:
-                dim_sizes = TemplateUtil._return_variable_shape(dim_names, dim_sizes_dict)
+                dim_sizes = TemplateUtil._return_variable_shape(
+                    dim_names, dim_sizes_dict
+                )
             except KeyError:
-                raise KeyError("Dim Name Error - Variable " + variable_name + " defined with dim not in dim_sizes_dict")
+                raise KeyError(
+                    "Dim Name Error - Variable "
+                    + variable_name
+                    + " defined with dim not in dim_sizes_dict"
+                )
 
             # Create variable and add to dataset
             if dtype == "flag":
                 flag_meanings = attributes.pop("flag_meanings")
-                variable = du.create_flags_variable(dim_sizes, meanings=flag_meanings,
-                                                    dim_names=dim_names, attributes=attributes)
+                variable = du.create_flags_variable(
+                    dim_sizes,
+                    meanings=flag_meanings,
+                    dim_names=dim_names,
+                    attributes=attributes,
+                )
 
             else:
-                variable = du.create_variable(dim_sizes, dim_names=dim_names,
-                                              dtype=dtype, attributes=attributes)
+                variable = du.create_variable(
+                    dim_sizes, dim_names=dim_names, dtype=dtype, attributes=attributes
+                )
 
                 if "encoding" in variable_attrs:
                     du.add_encoding(variable, **variable_attrs["encoding"])
@@ -120,7 +133,9 @@ class TemplateUtil:
 
         # Variable name must be type str
         if type(variable_name) != str:
-            raise TypeError("Invalid variable name: "+str(variable_name)+" (must be string)")
+            raise TypeError(
+                "Invalid variable name: " + str(variable_name) + " (must be string)"
+            )
 
         # todo - add more tests to check validity of variable definition
 
@@ -161,5 +176,5 @@ class TemplateUtil:
         return ds
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
