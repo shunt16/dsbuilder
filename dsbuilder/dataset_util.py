@@ -4,8 +4,10 @@ DatasetUtil class
 
 from dsbuilder.version import __version__
 import string
+import xarray
 from xarray import Variable, DataArray
 import numpy as np
+from typing import Union, Optional, List, Dict
 
 
 """___Authorship___"""
@@ -20,6 +22,14 @@ DEFAULT_DIM_NAMES = list(string.ascii_lowercase[-3:]) + list(
     string.ascii_lowercase[:-3]
 )
 DEFAULT_DIM_NAMES.reverse()
+
+
+ERR_CORR_DEFS = {
+    "random": {"n_params": 0},
+    "rectangle_absolute": {"n_params": 2},
+    "rectangular_relative": {"n_params": 2},
+    "triangular_relative": {"n_params": 2},
+}
 
 
 class DatasetUtil:
@@ -104,6 +114,112 @@ class DatasetUtil:
 
         if attributes is not None:
             variable.attrs = {**variable.attrs, **attributes}
+
+        return variable
+
+    @staticmethod
+    def create_unc_variable(
+            dim_sizes: List[int],
+            dtype: np.typecodes,
+            dim_names: List[str],
+            attributes: Optional[Dict] = None,
+            pdf_shape: str = "gaussian",
+            err_corr_def: Optional[Dict[str, Dict[str, Union[str, list]]]] = None,
+    ) -> xarray.Variable:
+        """
+        Return default empty 1d xarray uncertainty Variable
+
+        :param dim_sizes: dimension sizes as ints, i.e. `[dim1_size, dim2_size, dim3_size]` (e.g. `[2,3,5]`)
+        :param dtype: data type
+        :param dim_names: dimension names as strings, i.e. `["dim1_name", "dim2_name", "dim3_size"]`
+        :param attributes: dictionary of variable attributes, e.g. standard_name
+        :param pdf_shape: (default: `"gaussian"`) pdf shape of uncertainties
+        :param err_corr_def: uncertainty error-correlation structure definition, with each key/value pair defining the
+        error-correlation along a given dimension. Where the key is the name of the dimension (i.e. from `dim_names`)
+         and the value is a dictionary with the following entries:
+
+        * `form` (*str*) - error-correlation form, defines functional form of error-correlation structure along
+          dimension (recommended values from the FIDUCEO project defintions list, names
+          `dsbuilder.dataset_util.ERR_CORR_DEFS.keys()`)
+        * `params` (*list*) - parameters of the error-correlation structure defining function for dimension
+          (number of parameters required depends on the particular form, if FIDUCEO forms used param numbers checked)
+        * `units` (*list*) - units of the error-correlation function parameters for dimension
+          (ordered as the parameters)
+
+        for example:
+
+        .. code-block:: python
+
+            err_corr_def = {
+                "x": {
+                    "form": "rectangular_absolute",
+                    "params": [val1, val2],
+                    "units": ["m", "m"]
+                },
+                "y": {
+                    "form": "random",
+                    "params": [],
+                    "units": []
+                }
+            }
+
+        .. note::
+            If the error-correlation structure is not defined along a particular dimension (i.e. it is not
+            included in `err_corr_def`), the error-correlation is assumed random. Variable attributes are
+            populated to the effect of this assumption.
+
+        :returns: Default empty flag vector variable
+        """
+
+        # define uncertainty variable attributes, based on FIDUCEO Full FCDR definition (if required)
+        attributes = {} if attributes is None else attributes
+
+        if err_corr_def is None:
+            err_corr_def = {}
+
+        missing_err_corr_dims = [dim for dim in dim_names if dim not in err_corr_def.keys()]
+        for missing_err_corr_dim in missing_err_corr_dims:
+            err_corr_def[missing_err_corr_dim] = {
+                "form": "random",
+                "params": [],
+                "units": []
+            }
+
+        for i, corr_dim in enumerate(err_corr_def):
+            dim_str = "dim" + str(i+1)
+
+            name_str = "_".join(["err", "corr", dim_str, "name"])
+            form_str = "_".join(["err", "corr", dim_str, "form"])
+            params_str = "_".join(["err", "corr", dim_str, "params"])
+            units_str = "_".join(["err", "corr", dim_str, "units"])
+
+            form = err_corr_def[corr_dim]["form"]
+
+            attributes[name_str] = corr_dim
+            attributes[form_str] = form
+            attributes[units_str] = err_corr_def[corr_dim]["units"]
+
+            # if defined form, check number of params valid
+            if form in ERR_CORR_DEFS.keys():
+                n_params = len(err_corr_def[corr_dim]["params"])
+                req_n_params = ERR_CORR_DEFS[form]["n_params"]
+                if n_params != req_n_params:
+                    raise ValueError(
+                        "Must define " + str(req_n_params) + " for correlation form"
+                        + form + "(not " + str(n_params) + ")"
+                    )
+
+            attributes[params_str] = err_corr_def[corr_dim]["params"]
+
+        attributes["pdf_shape"] = pdf_shape
+
+        # Create variable
+        variable = DatasetUtil.create_variable(
+            dim_sizes,
+            dtype,
+            dim_names=dim_names,
+            attributes=attributes,
+        )
 
         return variable
 

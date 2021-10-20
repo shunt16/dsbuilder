@@ -180,6 +180,67 @@ class TestDatasetUtil(unittest.TestCase):
         self.assertEqual(-127, array_variable[2, 4, 2])
         self.assertEqual("std", array_variable.attrs["standard_name"])
 
+    def test_create_unc_variable(self):
+        err_corr_def = {
+            "x": {
+                "form": "rectangle_absolute",
+                "params": [1, 2],
+                "units": ["m", "m"]
+            },
+            "y": {
+                "form": "random",
+                "params": [],
+                "units": []
+            }
+        }
+
+        unc_variable = DatasetUtil.create_unc_variable(
+            [7, 8, 3],
+            np.int8,
+            ["x", "y", "z"],
+            pdf_shape="gaussian",
+            err_corr_def=err_corr_def
+        )
+
+        expected_attrs = {
+            "err_corr_dim1_name": "x",
+            "err_corr_dim1_form": "rectangle_absolute",
+            "err_corr_dim1_units": ['m', 'm'],
+            "err_corr_dim1_params": [1, 2],
+            "err_corr_dim2_name": "y",
+            "err_corr_dim2_form": "random",
+            "err_corr_dim2_units": [],
+            "err_corr_dim2_params": [],
+            "err_corr_dim3_name": "z",
+            "err_corr_dim3_form": "random",
+            "err_corr_dim3_units": [],
+            "err_corr_dim3_params": [],
+            "pdf_shape": "gaussian"
+         }
+
+        self.assertTrue(expected_attrs.items() <= unc_variable.attrs.items())
+
+    def test_create_unc_variable_incorrect_n_fiduceo_params(self):
+        err_corr_def = {
+            "x": {
+                "form": "rectangle_absolute",
+                "params": [1, 2, 3],
+                "units": ["m", "m"]
+            },
+        }
+
+        self.assertRaises(
+            ValueError,
+            DatasetUtil.create_unc_variable,
+            [7],
+            np.int8,
+            ["x"],
+            pdf_shape="gaussian",
+            err_corr_def=err_corr_def
+        )
+
+        pass
+
     def test_create_flags_variable_1D(self):
 
         meanings = [
