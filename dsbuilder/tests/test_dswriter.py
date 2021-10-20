@@ -8,7 +8,7 @@ from dsbuilder.dswriter import DSWriter
 from dsbuilder.version import __version__
 
 
-'''___Authorship___'''
+"""___Authorship___"""
 __author__ = "Sam Hunt"
 __created__ = "18/5/2020"
 __version__ = __version__
@@ -21,7 +21,6 @@ __status__ = "Development"
 
 
 class TestDSWriter(unittest.TestCase):
-
     def test__write_netcdf(self):
 
         ds = MagicMock()
@@ -29,8 +28,10 @@ class TestDSWriter(unittest.TestCase):
 
         DSWriter._write_netcdf(ds, path)
 
-        ds.to_netcdf.assert_called_once_with(path, encoding={}, engine='netcdf4', format='netCDF4')
+        ds.to_netcdf.assert_called_once_with(
+            path, encoding={}, engine="netcdf4", format="netCDF4"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
