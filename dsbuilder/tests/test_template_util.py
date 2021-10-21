@@ -63,6 +63,50 @@ class TestTemplateUtil(unittest.TestCase):
         )
 
     @patch("dsbuilder.template_util.DatasetUtil")
+    def test_add_variables_1uncvar(self, mock_du):
+        dataset = xarray.Dataset()
+
+        dim_sizes = {"dim1": 25, "dim2": 30, "dim3": 10, "dim4": 15}
+
+        test_variables = {
+            "array_variable": {
+                "dim": ["dim1", "dim2"],
+                "dtype": np.float32,
+                "attributes": {
+                    "standard_name": "array_variable_std_name",
+                    "long_name": "array_variable_long_name",
+                    "units": "units",
+                    "preferred_symbol": "av",
+                },
+                "encoding": {"dtype": np.uint16, "scale_factor": 1.0, "offset": 0.0},
+                "err_corr": "err_corr"
+            }
+        }
+
+        # run method
+        dataset = TemplateUtil.add_variables(dataset, test_variables, dim_sizes)
+
+        # test results
+        mock_du.return_value.create_unc_variable.assert_called_once_with(
+            [25, 30],
+            dim_names=["dim1", "dim2"],
+            dtype=np.float32,
+            attributes={
+                "standard_name": "array_variable_std_name",
+                "long_name": "array_variable_long_name",
+                "units": "units",
+                "preferred_symbol": "av",
+            },
+            err_corr="err_corr"
+        )
+        mock_du.return_value.add_encoding.assert_called_once_with(
+            mock_du.return_value.create_unc_variable.return_value,
+            dtype=np.uint16,
+            scale_factor=1.0,
+            offset=0.0,
+        )
+
+    @patch("dsbuilder.template_util.DatasetUtil")
     def test_add_variables_1flag(self, mock_du):
         dataset = xarray.Dataset()
 

@@ -129,6 +129,7 @@ class TemplateUtil:
             attributes = (
                 variable_attrs["attributes"] if "attributes" in variable_attrs else None
             )
+            err_corr = variable_attrs["err_corr"] if "err_corr" in variable_attrs else None
 
             # Determine variable shape from dims
             try:
@@ -153,9 +154,16 @@ class TemplateUtil:
                 )
 
             else:
-                variable = du.create_variable(
-                    dim_sizes, dim_names=dim_names, dtype=dtype, attributes=attributes
-                )
+
+                if err_corr is None:
+                    variable = du.create_variable(
+                        dim_sizes, dim_names=dim_names, dtype=dtype, attributes=attributes
+                    )
+
+                else:
+                    variable = du.create_unc_variable(
+                        dim_sizes, dim_names=dim_names, dtype=dtype, attributes=attributes, err_corr=err_corr
+                    )
 
                 if "encoding" in variable_attrs:
                     du.add_encoding(variable, **variable_attrs["encoding"])
