@@ -124,7 +124,7 @@ class DatasetUtil:
             dim_names: List[str],
             attributes: Optional[Dict] = None,
             pdf_shape: str = "gaussian",
-            err_corr_def: Optional[Dict[str, Dict[str, Union[str, list]]]] = None,
+            err_corr: Optional[Dict[str, Dict[str, Union[str, list]]]] = None,
     ) -> xarray.Variable:
         """
         Return default empty 1d xarray uncertainty Variable
@@ -134,7 +134,7 @@ class DatasetUtil:
         :param dim_names: dimension names as strings, i.e. `["dim1_name", "dim2_name", "dim3_size"]`
         :param attributes: dictionary of variable attributes, e.g. standard_name
         :param pdf_shape: (default: `"gaussian"`) pdf shape of uncertainties
-        :param err_corr_def: uncertainty error-correlation structure definition, with each key/value pair defining the
+        :param err_corr: uncertainty error-correlation structure definition, with each key/value pair defining the
         error-correlation along a given dimension. Where the key is the name of the dimension (i.e. from `dim_names`)
          and the value is a dictionary with the following entries:
 
@@ -174,18 +174,18 @@ class DatasetUtil:
         # define uncertainty variable attributes, based on FIDUCEO Full FCDR definition (if required)
         attributes = {} if attributes is None else attributes
 
-        if err_corr_def is None:
-            err_corr_def = {}
+        if err_corr is None:
+            err_corr = {}
 
-        missing_err_corr_dims = [dim for dim in dim_names if dim not in err_corr_def.keys()]
+        missing_err_corr_dims = [dim for dim in dim_names if dim not in err_corr.keys()]
         for missing_err_corr_dim in missing_err_corr_dims:
-            err_corr_def[missing_err_corr_dim] = {
+            err_corr[missing_err_corr_dim] = {
                 "form": "random",
                 "params": [],
                 "units": []
             }
 
-        for i, corr_dim in enumerate(err_corr_def):
+        for i, corr_dim in enumerate(err_corr):
             dim_str = "dim" + str(i+1)
 
             name_str = "_".join(["err", "corr", dim_str, "name"])
@@ -193,15 +193,15 @@ class DatasetUtil:
             params_str = "_".join(["err", "corr", dim_str, "params"])
             units_str = "_".join(["err", "corr", dim_str, "units"])
 
-            form = err_corr_def[corr_dim]["form"]
+            form = err_corr[corr_dim]["form"]
 
             attributes[name_str] = corr_dim
             attributes[form_str] = form
-            attributes[units_str] = err_corr_def[corr_dim]["units"]
+            attributes[units_str] = err_corr[corr_dim]["units"]
 
             # if defined form, check number of params valid
             if form in ERR_CORR_DEFS.keys():
-                n_params = len(err_corr_def[corr_dim]["params"])
+                n_params = len(err_corr[corr_dim]["params"])
                 req_n_params = ERR_CORR_DEFS[form]["n_params"]
                 if n_params != req_n_params:
                     raise ValueError(
@@ -209,7 +209,7 @@ class DatasetUtil:
                         + form + "(not " + str(n_params) + ")"
                     )
 
-            attributes[params_str] = err_corr_def[corr_dim]["params"]
+            attributes[params_str] = err_corr[corr_dim]["params"]
 
         attributes["pdf_shape"] = pdf_shape
 

@@ -181,7 +181,7 @@ class TestDatasetUtil(unittest.TestCase):
         self.assertEqual("std", array_variable.attrs["standard_name"])
 
     def test_create_unc_variable(self):
-        err_corr_def = {
+        err_corr = {
             "x": {
                 "form": "rectangle_absolute",
                 "params": [1, 2],
@@ -199,7 +199,7 @@ class TestDatasetUtil(unittest.TestCase):
             np.int8,
             ["x", "y", "z"],
             pdf_shape="gaussian",
-            err_corr_def=err_corr_def
+            err_corr=err_corr
         )
 
         expected_attrs = {
@@ -221,7 +221,7 @@ class TestDatasetUtil(unittest.TestCase):
         self.assertTrue(expected_attrs.items() <= unc_variable.attrs.items())
 
     def test_create_unc_variable_incorrect_n_fiduceo_params(self):
-        err_corr_def = {
+        err_corr = {
             "x": {
                 "form": "rectangle_absolute",
                 "params": [1, 2, 3],
@@ -236,7 +236,7 @@ class TestDatasetUtil(unittest.TestCase):
             np.int8,
             ["x"],
             pdf_shape="gaussian",
-            err_corr_def=err_corr_def
+            err_corr=err_corr
         )
 
         pass
