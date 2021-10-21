@@ -16,7 +16,8 @@ Dataset specifications are described in python dictionaries. Most importantly is
 * ``dim`` - list of variable dimension names
 * ``dtype`` - variable data type, either a `numpy dtype <https://numpy.org/devdocs/user/basics.types.html>`_ or one of the **dsbuilder** :ref:`special dtypes <special dtypes>`.
 * ``attributes`` - dictionary of variable metadata
-* ``encoding`` - variable `encoding <http://xarray.pydata.org/en/stable/user-guide/io.html?highlight=encoding#writing-encoded-data>`_.
+* ``err_corr`` - (optional) dictionary defining of uncertainty error-correlation structure, only include if variable is an uncertainty. See :ref:`uncertainty variables <uncertainty variables>` section for more.
+* ``encoding`` - (optional) variable `encoding <http://xarray.pydata.org/en/stable/user-guide/io.html?highlight=encoding#writing-encoded-data>`_.
 
 Therefore, a ``variables`` dictionary for a dataset containing red, green and blue radiance band variables may look as follows:
 
@@ -40,6 +41,42 @@ Therefore, a ``variables`` dictionary for a dataset containing red, green and bl
         }
     }
 
+
+.. _uncertainty variables:
+
+Defining uncertainty variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Uncertainty variables are created when an uncertainty error-correlation structure definition is included in the variable definition dictionary, with the ``"err_corr"`` entry. This entry is dictionary where each key/value pair defines the error-correlation along a given dimension. The key is the name of the dimension (i.e. from ``dim_names``) and the value is a dictionary with the following entries:
+
+* ``form`` - error-correlation form, defines functional form of error-correlation structure along
+  dimension (recommended values from the `FIDUCEO project defintions list <https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5c84c9e2c&appId=PPGMS>`_, names
+  ``dsbuilder.dataset_util.ERR_CORR_DEFS.keys()``)
+* ``params`` - parameters of the error-correlation structure defining function for dimension
+  (number of parameters required depends on the particular form, if FIDUCEO forms used param numbers checked)
+* ``units`` - units of the error-correlation function parameters for dimension (ordered as the parameters)
+
+for example:
+
+.. code-block:: python
+
+    err_corr = {
+        "x": {
+            "form": "rectangular_absolute",
+            "params": [val1, val2],
+            "units": ["m", "m"]
+        },
+        "y": {
+            "form": "random",
+            "params": [],
+            "units": []
+        }
+    }
+
+.. note::
+    If the error-correlation structure is not defined along a particular dimension (i.e. it is not
+    included in ``err_corr``), the error-correlation is assumed random. Variable attributes are
+    populated to the effect of this assumption.
 
 .. _special dtypes:
 
@@ -68,11 +105,6 @@ The variable must be defined with an attribute that lists the per bit flag meani
    }
 
 The smallest necessary integer is used as the flag variable dtype, given the number of flag meanings defined (i.e. 7 flag meanings results in an 8 bit integer variable).
-
-Uncertainties
-_____________
-
-This is work in progress!
 
 Creating a template dataset
 ---------------------------

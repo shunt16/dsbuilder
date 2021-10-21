@@ -42,13 +42,18 @@ A simple dataset containing a radiance image may be built as follows:
 
 **dsbuilder** is developed within Earth observation community, so it is designed with adhering to the `cf conventions <https://cfconventions.org>`_ particularly in mind. Eventually, **dsbuilder** will do this more automatically.
 
-Contents
---------
+For more information see the User Guide and API Reference documentation.
 
 .. toctree::
    :maxdepth: 2
+   :caption: User Guide
 
    content/quickstart
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+
    content/API/dsbuilder
 
 Contributions
