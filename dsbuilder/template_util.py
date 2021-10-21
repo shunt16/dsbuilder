@@ -2,6 +2,7 @@
 TemplateUtil class
 """
 
+from typing import Optional, Dict, List
 from dsbuilder.version import __version__
 from dsbuilder.dataset_util import DatasetUtil
 import xarray
@@ -16,21 +17,66 @@ __email__ = "sam.hunt@npl.co.uk"
 __status__ = "Development"
 
 
-def create_template_dataset(variables_dict, dim_sizes_dict, metadata=None):
+def create_template_dataset(
+        variables_dict: Dict[str, Dict],
+        dim_sizes_dict: Dict[str, int],
+        metadata: Optional[Dict] = None
+) -> xarray.Dataset:
     """
     Returns template dataset
 
-    :type variables_dict: dict
     :type variables_dict: dictionary defining variables
 
-    :type dim_sizes_dict: dict
-    :param dim_sizes_dict: entry per dataset dimension with value of size as int
+    Each key/value pair defines one variable, where the key is the variable name and the value is a dictionary with
+    the following entries:
 
-    :type metadata: dict
-    :param metadata: (optional) dictionary of dataset metadata
+    * `"dtype"` (*np.typecodes*/*str*) - variable data type, either a numpy data type or special value `"flag"` for
+      flag variable
+    * `"dim"` (*list*) - list of variable dimension names
+    * `"attributes"` (*dict*) - (optional) variable attributes
+    * `"err_corr"` (*dict) - (optional) definition of uncertainty error-correlation structure, only include if
+      variable is an uncertainty, see `dsbuilder.dataset_util.DatasetUtil.create_unc_variable` for specification.
+    * `"flag_meanings"` (*list*) - (optional) flag definitions by bit, only include if variable dtype is `"flag"`
 
-    :return ds: template dataset
-    :rtype: xarray.Dataset
+    :param dim_sizes_dict: dataset dimension sizes
+    :param metadata: dictionary of dataset metadata
+
+    for example:
+
+    .. code-block:: python
+
+        import numpy as np
+
+        variables_dict = {
+            "temperature": {
+                "dtype": np.float32,
+                "dim": ["x", "y", "time"],
+                "attrs": {"units": "K"}
+            },
+            "u_temperature": {
+                "dtype": np.float16,
+                "dim": ["x", "y", "time"],
+                "attrs": {"units": "%"}
+                "err_corr": {
+                    "form": "random",
+                    "params": [],
+                    "units": []
+                }
+            },
+            "quality_flag_time": {
+                "dtype": np.float16,
+                "dim": ["time"],
+                "flag_meanings": ["bad", "dubious"]
+            },
+        }
+
+        dim_size_dict = {
+            "x": 500,
+            "y": 600,
+            "time": 6
+        }
+
+    :returns: template dataset
     """
 
     # Create dataset
@@ -52,21 +98,20 @@ class TemplateUtil:
     """
 
     @staticmethod
-    def add_variables(ds, variables_dict, dim_sizes_dict):
+    def add_variables(
+            ds: xarray.Dataset,
+            variables_dict: Dict[str, Dict],
+            dim_sizes_dict: Dict[str, int]
+    ) -> xarray.Dataset:
         """
         Adds defined variables dataset
 
-        :type ds: xarray.Dataset
         :param ds: dataset
-
-        :type variables_dict: dict
-        :type variables_dict: dictionary defining variables
-
-        :type dim_sizes_dict: dict
+        :param variables_dict: dictionary defining variables, see definition in
+        `dsbuilder.template_util.create_template_dataset` doc string
         :param dim_sizes_dict: entry per dataset dimension with value of size as int
 
-        :return: dataset with defined variables
-        :rtype: xarray.Dataset
+        :returns: dataset with defined variables
         """
 
         du = DatasetUtil()
@@ -120,14 +165,14 @@ class TemplateUtil:
         return ds
 
     @staticmethod
-    def _check_variable_definition(variable_name, variable_attrs):
+    def _check_variable_definition(
+            variable_name: str,
+            variable_attrs: Dict
+    ):
         """
         Checks validity of variable definition, raising errors as appropriate
 
-        :type variable_name: str
         :param variable_name: variable name
-
-        :type variable_attrs: dict
         :param variable_attrs: variable defining dictionary
         """
 
@@ -140,35 +185,33 @@ class TemplateUtil:
         # todo - add more tests to check validity of variable definition
 
     @staticmethod
-    def _return_variable_shape(dim_names, dim_sizes_dict):
+    def _return_variable_shape(
+            dim_names: List[str],
+            dim_sizes_dict: Dict[str, int]
+    ) -> List[int]:
         """
         Returns dimension sizes of specified dimensions
 
-        :type dim_names: list
-        :param dim_names: (optional) dimension names as strings, i.e. ["dim1_name", "dim2_name", "dim3_size"]
+        :param dim_names: dimension names
+        :param dim_sizes_dict: dimension sizes, entry per dimension
 
-        :type dim_sizes_dict: dict
-        :param dim_sizes_dict: entry per dataset dimension with value of size as int
-
-        :return: dimension sizes as ints, i.e. [dim1_size, dim2_size, dim3_size] (e.g. [2,3,5])
-        :rtype: list
+        :returns: dimension sizes
         """
 
         return [dim_sizes_dict[dim_name] for dim_name in dim_names]
 
     @staticmethod
-    def add_metadata(ds, metadata):
+    def add_metadata(
+            ds: xarray.Dataset,
+            metadata: Dict
+    ) -> xarray.Dataset:
         """
         Adds metadata to dataset
 
-        :type ds: xarray.Dataset
         :param ds: dataset
-
-        :type metadata: dict
         :param metadata: dictionary of dataset metadata
 
-        :return: dataset with updated metadata
-        :rtype: xarray.Dataset
+        :returns: dataset with updated metadata
         """
 
         ds.attrs.update(metadata)
