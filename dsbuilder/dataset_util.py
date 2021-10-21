@@ -1,5 +1,5 @@
 """
-DatasetUtil class
+Utilities for creating xarray dataset variables in specified forms
 """
 
 from dsbuilder.version import __version__
@@ -38,24 +38,21 @@ class DatasetUtil:
     """
 
     @staticmethod
-    def create_default_array(dim_sizes, dtype, dim_names=None, fill_value=None):
+    def create_default_array(
+            dim_sizes: List[int],
+            dtype: np.typecodes,
+            dim_names: Optional[List[str]] = None,
+            fill_value: Optional[Union[int, float]] =None
+    ) -> xarray.DataArray:
         """
         Return default empty xarray DataArray
 
-        :type dim_sizes: list
-        :param dim_sizes: dimension sizes as ints, i.e. [dim1_size, dim2_size, dim3_size] (e.g. [2,3,5])
-
-        :type dtype: type
+        :param dim_sizes: dimension sizes, i.e. ``[dim1_size, dim2_size, dim3_size]`` (e.g. ``[2,3,5]``)
         :param dtype: numpy data type
+        :param dim_names: dimension names, i.e. ``["dim1_name", "dim2_name", "dim3_name"]``
+        :param fill_value: fill value (if None CF compliant value used)
 
-        :type dim_names: list
-        :param dim_names: (optional) dimension names as strings, i.e. ["dim1_name", "dim2_name", "dim3_size"]
-
-        :type fill_value: int/float
-        :param fill_value: (optional) fill value (if None CF compliant value used)
-
-        :return: Default empty array
-        :rtype: xarray.DataArray
+        :returns: Default empty array
         """
 
         if fill_value is None:
@@ -74,28 +71,22 @@ class DatasetUtil:
 
     @staticmethod
     def create_variable(
-        dim_sizes, dtype, dim_names=None, attributes=None, fill_value=None
-    ):
+        dim_sizes: List[int],
+        dtype: np.typecodes,
+        dim_names: Optional[List[str]] = None,
+        attributes: Dict = None,
+        fill_value: Optional[Union[int, float]] = None
+    ) -> xarray.Variable:
         """
         Return default empty xarray Variable
 
-        :type dim_sizes: list
-        :param dim_sizes: dimension sizes as ints, i.e. [dim1_size, dim2_size, dim3_size] (e.g. [2,3,5])
-
-        :type dtype: type
+        :param dim_sizes: dimension sizes, i.e. ``[dim1_size, dim2_size, dim3_size]`` (e.g. ``[2,3,5]``)
         :param dtype: numpy data type
+        :param dim_names: dimension names as strings, i.e. ``["dim1_name", "dim2_name", "dim3_size"]``
+        :param attributes: dictionary of variable attributes, e.g. standard_name
+        :param fill_value: fill value (if None CF compliant value used)
 
-        :type dim_names: list
-        :param dim_names: (optional) dimension names as strings, i.e. ["dim1_name", "dim2_name", "dim3_size"]
-
-        :type attributes: dict
-        :param attributes: (optional) dictionary of variable attributes, e.g. standard_name
-
-        :type fill_value: int/float
-        :param fill_value: (optional) fill value (if None CF compliant value used)
-
-        :return: Default empty variable
-        :rtype: xarray.Variable
+        :returns: Default empty variable
         """
 
         if fill_value is None:
@@ -129,21 +120,24 @@ class DatasetUtil:
         """
         Return default empty 1d xarray uncertainty Variable
 
-        :param dim_sizes: dimension sizes as ints, i.e. `[dim1_size, dim2_size, dim3_size]` (e.g. `[2,3,5]`)
+        :param dim_sizes: dimension sizes, i.e. ``[dim1_size, dim2_size, dim3_size]`` (e.g. ``[2,3,5]``)
         :param dtype: data type
-        :param dim_names: dimension names as strings, i.e. `["dim1_name", "dim2_name", "dim3_size"]`
+        :param dim_names: dimension names, i.e. ``["dim1_name", "dim2_name", "dim3_size"]``
         :param attributes: dictionary of variable attributes, e.g. standard_name
         :param pdf_shape: (default: `"gaussian"`) pdf shape of uncertainties
-        :param err_corr: uncertainty error-correlation structure definition, with each key/value pair defining the
-        error-correlation along a given dimension. Where the key is the name of the dimension (i.e. from `dim_names`)
-         and the value is a dictionary with the following entries:
+        :param err_corr: uncertainty error-correlation structure definition, defined as below.
 
-        * `form` (*str*) - error-correlation form, defines functional form of error-correlation structure along
-          dimension (recommended values from the FIDUCEO project defintions list, names
-          `dsbuilder.dataset_util.ERR_CORR_DEFS.keys()`)
-        * `params` (*list*) - parameters of the error-correlation structure defining function for dimension
+        :returns: Default empty flag vector variable
+
+        For ``err_corr`` each key/value pair defines the error-correlation along a given dimension, where the key is
+        the name of the dimension (i.e. from `dim_names`) and the value is a dictionary with the following entries:
+
+        * ``form`` (*str*) - error-correlation form, defines functional form of error-correlation structure along
+          dimension (recommended values from the `FIDUCEO project defintions list <https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5c84c9e2c&appId=PPGMS>`_,
+          names ``dsbuilder.dataset_util.ERR_CORR_DEFS.keys()``)
+        * ``params`` (*list*) - parameters of the error-correlation structure defining function for dimension
           (number of parameters required depends on the particular form, if FIDUCEO forms used param numbers checked)
-        * `units` (*list*) - units of the error-correlation function parameters for dimension
+        * ``units`` (*list*) - units of the error-correlation function parameters for dimension
           (ordered as the parameters)
 
         for example:
@@ -165,10 +159,8 @@ class DatasetUtil:
 
         .. note::
             If the error-correlation structure is not defined along a particular dimension (i.e. it is not
-            included in `err_corr_def`), the error-correlation is assumed random. Variable attributes are
+            included in ``err_corr``), the error-correlation is assumed random. Variable attributes are
             populated to the effect of this assumption.
-
-        :returns: Default empty flag vector variable
         """
 
         # define uncertainty variable attributes, based on FIDUCEO Full FCDR definition (if required)
@@ -224,21 +216,21 @@ class DatasetUtil:
         return variable
 
     @staticmethod
-    def create_flags_variable(dim_sizes, meanings, dim_names=None, attributes=None):
+    def create_flags_variable(
+            dim_sizes: List[int],
+            meanings: List[str],
+            dim_names: Optional[List[str]] = None,
+            attributes: Optional[Dict] = None
+    ) -> xarray.Variable:
         """
         Return default empty 1d xarray flag Variable
 
-        :type dim_sizes: list
-        :param dim_sizes: dimension sizes as ints, i.e. [dim1_size, dim2_size, dim3_size] (e.g. [2,3,5])
+        :param dim_sizes: dimension sizes, i.e. ``[dim1_size, dim2_size, dim3_size]`` (e.g. ``[2,3,5]``)
+        :param meanings: flag meanings by bit
+        :param dim_names: dimension names, i.e. ``["dim1_name", "dim2_name", "dim3_size"]``
+        :param attributes: dictionary of variable attributes, e.g. standard_name
 
-        :type attributes: dict
-        :param attributes: (optional) dictionary of variable attributes, e.g. standard_name
-
-        :type dim_names: list
-        :param dim_names: (optional) dimension names as strings, i.e. ["dim1_name", "dim2_name", "dim3_size"]
-
-        :return: Default empty flag vector variable
-        :rtype: xarray.Variable
+        :returns: Default empty flag vector variable
         """
 
         n_masks = len(meanings)
@@ -264,15 +256,12 @@ class DatasetUtil:
         return variable
 
     @staticmethod
-    def return_flags_dtype(n_masks):
+    def return_flags_dtype(n_masks: int) -> np.typecodes:
         """
         Return required flags array data type
 
-        :type n_masks: int
         :param n_masks: number of masks required in flag array
-
         :return: data type
-        :rtype: dtype
         """
 
         if n_masks <= 8:
@@ -286,28 +275,22 @@ class DatasetUtil:
 
     @staticmethod
     def add_encoding(
-        variable, dtype, scale_factor=1.0, offset=0.0, fill_value=None, chunksizes=None
+        variable: xarray.Variable,
+        dtype: np.typecodes,
+        scale_factor: Optional[float] = 1.0,
+        offset: Optional[float] = 0.0,
+        fill_value: Optional[Union[int, float]] = None,
+        chunksizes: Optional[float] = None
     ):
         """
         Add encoding to xarray Variable to apply when writing netCDF files
 
-        :type variable: xarray.Variable
         :param variable: data variable
-
-        :type dtype: type
         :param dtype: numpy data type
-
-        :type scale_factor: float
         :param scale_factor: variable scale factor
-
-        :type offset: float
         :param offset: variable offset value
-
-        :type fill_value: int/float
-        :param fill_value: (optional) fill value
-
-        :type chunksizes: float
-        :param chunksizes: (optional) chucksizes
+        :param fill_value: fill value
+        :param chunksizes: chucksizes
         """
 
         # todo - make sure flags can't have encoding added
@@ -327,15 +310,13 @@ class DatasetUtil:
         variable.encoding = encoding_dict
 
     @staticmethod
-    def get_default_fill_value(dtype):
+    def get_default_fill_value(dtype: np.typecodes) -> Union[int, float]:
         """
         Returns default fill_value for given data type
 
-        :type dtype: type
-        :param dtype: numpy dtype
+        :param dtype: numpy data type
 
         :return: CF-conforming fill value
-        :rtype: fill_value
         """
 
         if dtype == np.int8:

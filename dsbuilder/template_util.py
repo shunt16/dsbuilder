@@ -1,5 +1,5 @@
 """
-TemplateUtil class
+Utilities for creating template xarray datasets
 """
 
 from typing import Optional, Dict, List
@@ -25,23 +25,25 @@ def create_template_dataset(
     """
     Returns template dataset
 
-    :type variables_dict: dictionary defining variables
-
-    Each key/value pair defines one variable, where the key is the variable name and the value is a dictionary with
-    the following entries:
-
-    * `"dtype"` (*np.typecodes*/*str*) - variable data type, either a numpy data type or special value `"flag"` for
-      flag variable
-    * `"dim"` (*list*) - list of variable dimension names
-    * `"attributes"` (*dict*) - (optional) variable attributes
-    * `"err_corr"` (*dict) - (optional) definition of uncertainty error-correlation structure, only include if
-      variable is an uncertainty, see `dsbuilder.dataset_util.DatasetUtil.create_unc_variable` for specification.
-    * `"flag_meanings"` (*list*) - (optional) flag definitions by bit, only include if variable dtype is `"flag"`
-
+    :param variables_dict: dictionary defining variables, as defined below.
     :param dim_sizes_dict: dataset dimension sizes
     :param metadata: dictionary of dataset metadata
 
-    for example:
+    :returns: template dataset
+
+    For the ``variables_dict`` each key/value pair defines one variable, where the key is the variable name and the
+    value is a dictionary with the following entries:
+
+    * ``"dtype"`` (*np.typecodes*/*str*) - variable data type, either a numpy data type or special value ``"flag"`` for
+      flag variable
+    * ``"dim"`` (*list*) - list of variable dimension names
+    * ``"attributes"`` (*dict*) - (optional) variable attributes
+    * ``"err_corr"`` (*dict*) - (optional) definition of uncertainty error-correlation structure, only include if
+      variable is an uncertainty, see ``dsbuilder.dataset_util.DatasetUtil.create_unc_variable`` for specification.
+    * ``"flag_meanings"`` (*list*) - (optional) flag definitions by bit, only include if variable dtype is ``"flag"``
+    * ``"encoding"`` (*dict*) - (optional) variable `encoding <http://xarray.pydata.org/en/stable/user-guide/io.html?highlight=encoding#writing-encoded-data>`_.
+
+    For example:
 
     .. code-block:: python
 
@@ -76,7 +78,6 @@ def create_template_dataset(
             "time": 6
         }
 
-    :returns: template dataset
     """
 
     # Create dataset
@@ -107,8 +108,7 @@ class TemplateUtil:
         Adds defined variables dataset
 
         :param ds: dataset
-        :param variables_dict: dictionary defining variables, see definition in
-        `dsbuilder.template_util.create_template_dataset` doc string
+        :param variables_dict: dictionary defining variables, see definition in ``dsbuilder.template_util.create_template_dataset`` doc string
         :param dim_sizes_dict: entry per dataset dimension with value of size as int
 
         :returns: dataset with defined variables
