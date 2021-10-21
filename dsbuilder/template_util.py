@@ -58,7 +58,7 @@ def create_template_dataset(
             "u_temperature": {
                 "dtype": np.float16,
                 "dim": ["x", "y", "time"],
-                "attrs": {"units": "%"}
+                "attrs": {"units": "%"},
                 "err_corr": {
                     "form": "random",
                     "params": [],
