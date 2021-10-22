@@ -11,3 +11,4 @@ pytest-cov >=2.8.1
 # for docs
 sphinx
 sphinx-rtd-theme
+sphinx-autodoc-typehints
