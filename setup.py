@@ -31,7 +31,8 @@ setup(
     ],
     python_requires=">=3.6",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
-    install_requires=[],
+    install_requires=["numpy", "netcdf4", "xarray"],
+    extras_require={"dev": ["pre-commit", "tox", "sphinx", "sphinx_rtd_theme", "sphinx-autodoc-typehints"]},
     entry_points={
         "console_scripts": [],
     },
