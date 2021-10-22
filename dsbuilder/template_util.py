@@ -38,57 +38,10 @@ def create_template_dataset(
       flag variable
     * ``"dim"`` (*list*) - list of variable dimension names
     * ``"attributes"`` (*dict*) - (optional) variable attributes
-    * ``"err_corr"`` (*dict*) - (optional) definition of uncertainty error-correlation structure, only include if
-      variable is an uncertainty, see ``dsbuilder.dataset_util.DatasetUtil.create_unc_variable`` for specification.
-    * ``"flag_meanings"`` (*list*) - (optional) flag definitions by bit, only include if variable dtype is ``"flag"``
-    * ``"encoding"`` (*dict*) - (optional) variable `encoding <http://xarray.pydata.org/en/stable/user-guide/io.html?highlight=encoding#writing-encoded-data>`_.
+    * ``"encoding"`` (*dict*) - (optional) variable encoding.
 
-    For example:
-
-    .. code-block:: python
-
-        import numpy as np
-
-        # define ds variables
-        variables_dict = {
-            "temperature": {
-                "dtype": np.float32,
-                "dim": ["x", "y", "time"],
-                "attrs": {
-                    "units": "K",
-                    "u_components": ["u_temperature"]
-                }
-            },
-            "u_temperature": {
-                "dtype": np.int16,
-                "dim": ["x", "y", "time"],
-                "attrs": {"units": "%"},
-                "err_corr": [
-                    {
-                        "dim": "x",
-                        "form": "systematic",
-                        "params": [],
-                        "units": []
-                    }
-                ]
-            },
-            "quality_flag_time": {
-                "dtype": "flag",
-                "dim": ["time"],
-                "flag_meanings": ["bad", "dubious"]
-            },
-        }
-
-        # define dim_size_dict to specify size of arrays
-        dim_sizes_dict = {
-            "x": 500,
-            "y": 600,
-            "time": 6
-        }
-
-        # create dataset
-        ds = create_template_dataset(variables_dict, dim_sizes_dict)
-
+    For more information on the required form of these entries, see the :ref:`variables definition section <variables dict>`
+    of the user guide.
     """
 
     # Create dataset
@@ -119,7 +72,7 @@ class TemplateUtil:
         Adds defined variables dataset
 
         :param ds: dataset
-        :param variables_dict: dictionary defining variables, see definition in ``dsbuilder.template_util.create_template_dataset`` doc string
+        :param variables_dict: dictionary defining variables, see the :ref:`variables definition section <variables dict>` of the user guide for more information.
         :param dim_sizes_dict: entry per dataset dimension with value of size as int
 
         :returns: dataset with defined variables
@@ -140,7 +93,11 @@ class TemplateUtil:
             attributes = (
                 variable_attrs["attributes"] if "attributes" in variable_attrs else None
             )
-            err_corr = variable_attrs["err_corr"] if "err_corr" in variable_attrs else None
+
+            err_corr = None
+            if attributes is not None:
+                if "err_corr" in attributes:
+                    err_corr = attributes.pop("err_corr")
 
             # Determine variable shape from dims
             try:

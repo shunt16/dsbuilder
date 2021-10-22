@@ -77,9 +77,9 @@ class TestTemplateUtil(unittest.TestCase):
                     "long_name": "array_variable_long_name",
                     "units": "units",
                     "preferred_symbol": "av",
+                    "err_corr": "err_corr"
                 },
                 "encoding": {"dtype": np.uint16, "scale_factor": 1.0, "offset": 0.0},
-                "err_corr": "err_corr"
             }
         }
 
