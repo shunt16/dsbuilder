@@ -49,34 +49,44 @@ def create_template_dataset(
 
         import numpy as np
 
+        # define ds variables
         variables_dict = {
             "temperature": {
                 "dtype": np.float32,
                 "dim": ["x", "y", "time"],
-                "attrs": {"units": "K"}
+                "attrs": {
+                    "units": "K",
+                    "u_components": ["u_temperature"]
+                }
             },
             "u_temperature": {
-                "dtype": np.float16,
+                "dtype": np.int16,
                 "dim": ["x", "y", "time"],
                 "attrs": {"units": "%"},
                 "err_corr": {
-                    "form": "random",
-                    "params": [],
-                    "units": []
+                    "x": {
+                        "form": "systematic",
+                        "params": [],
+                        "units": []
+                    }
                 }
             },
             "quality_flag_time": {
-                "dtype": np.float16,
+                "dtype": "flag",
                 "dim": ["time"],
                 "flag_meanings": ["bad", "dubious"]
             },
         }
 
-        dim_size_dict = {
+        # define dim_size_dict to specify size of arrays
+        dim_sizes_dict = {
             "x": 500,
             "y": 600,
             "time": 6
         }
+
+        # create dataset
+        ds = create_template_dataset(variables_dict, dim_sizes_dict)
 
     """
 
