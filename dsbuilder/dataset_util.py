@@ -5,8 +5,7 @@ Utilities for creating xarray dataset variables in specified forms
 from dsbuilder.version import __version__
 import string
 import xarray
-from xarray import Variable, DataArray
-import numpy as np
+import numpy
 from typing import Union, Optional, List, Dict
 
 
@@ -15,7 +14,7 @@ __author__ = "Sam Hunt"
 __created__ = "18/5/2020"
 __version__ = __version__
 __maintainer__ = "Sam Hunt"
-__email__ = "sam.hunt@npl.co.uk"
+__email__ = "sam.hunt@numpyl.co.uk"
 __status__ = "Development"
 
 DEFAULT_DIM_NAMES = list(string.ascii_lowercase[-3:]) + list(
@@ -40,7 +39,7 @@ class DatasetUtil:
     @staticmethod
     def create_default_array(
             dim_sizes: List[int],
-            dtype: np.typecodes,
+            dtype: numpy.typecodes,
             dim_names: Optional[List[str]] = None,
             fill_value: Optional[Union[int, float]] =None
     ) -> xarray.DataArray:
@@ -58,12 +57,12 @@ class DatasetUtil:
         if fill_value is None:
             fill_value = DatasetUtil.get_default_fill_value(dtype)
 
-        empty_array = np.full(dim_sizes, fill_value, dtype)
+        empty_array = numpy.full(dim_sizes, fill_value, dtype)
 
         if dim_names is not None:
-            default_array = DataArray(empty_array, dims=dim_names)
+            default_array = xarray.DataArray(empty_array, dims=dim_names)
         else:
-            default_array = DataArray(
+            default_array = xarray.DataArray(
                 empty_array, dims=DEFAULT_DIM_NAMES[-len(dim_sizes) :]
             )
 
@@ -72,7 +71,7 @@ class DatasetUtil:
     @staticmethod
     def create_variable(
         dim_sizes: List[int],
-        dtype: np.typecodes,
+        dtype: numpy.typecodes,
         dim_names: Optional[List[str]] = None,
         attributes: Dict = None,
         fill_value: Optional[Union[int, float]] = None
@@ -97,9 +96,9 @@ class DatasetUtil:
         )
 
         if dim_names is None:
-            variable = Variable(DEFAULT_DIM_NAMES[-len(dim_sizes) :], default_array)
+            variable = xarray.Variable(DEFAULT_DIM_NAMES[-len(dim_sizes) :], default_array)
         else:
-            variable = Variable(dim_names, default_array)
+            variable = xarray.Variable(dim_names, default_array)
 
         variable.attrs["_FillValue"] = fill_value
 
@@ -111,7 +110,7 @@ class DatasetUtil:
     @staticmethod
     def create_unc_variable(
             dim_sizes: List[int],
-            dtype: np.typecodes,
+            dtype: numpy.typecodes,
             dim_names: List[str],
             attributes: Optional[Dict] = None,
             pdf_shape: str = "gaussian",
@@ -129,34 +128,19 @@ class DatasetUtil:
 
         :returns: Default empty flag vector variable
 
-        Each element of ``err_corr``  is  dictionary defining  the error-correlation along one or more dimensions,
-        which should define the following entries:
+        Each element of ``err_corr``  is a dictionary that defines the error-correlation along one or more dimensions,
+        which should include the following entries:
 
         * ``dim`` (*str*/*list*) - name of the dimension(s) as a ``str`` or list of ``str``'s (i.e. from ``dim_names``)
-        * ``form`` (*str*) - error-correlation form, defines functional form of error-correlation structure along
-          dimension (recommended values from the `FIDUCEO project defintions list <https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5c84c9e2c&appId=PPGMS>`_,
-          names ``dsbuilder.dataset_util.ERR_CORR_DEFS.keys()``)
+        * ``form`` (*str*) - error-correlation form name, functional form of error-correlation structure for
+          dimension(s)
         * ``params`` (*list*) - (optional) parameters of the error-correlation structure defining function for dimension
           if required. The number of parameters required depends on the particular form.
         * ``units`` (*list*) - (optional) units of the error-correlation function parameters for dimension
           (ordered as the parameters)
 
-        for example:
-
-        .. code-block:: python
-
-            err_corr_def = [
-                {
-                    "dim": "x",
-                    "form": "rectangular_absolute",
-                    "params": [val1, val2],
-                    "units": ["m", "m"]
-                },
-                {
-                    "dim": ["y", "z"],
-                    "form": "random",
-                }
-            ]
+        For more information on the required form of these entries, see the :ref:`uncertainties section <err corr>` of
+        the user guide.
 
         .. note::
             If the error-correlation structure is not defined along a particular dimension (i.e. it is not
@@ -261,7 +245,7 @@ class DatasetUtil:
         return variable
 
     @staticmethod
-    def return_flags_dtype(n_masks: int) -> np.typecodes:
+    def return_flags_dtype(n_masks: int) -> numpy.typecodes:
         """
         Return required flags array data type
 
@@ -270,18 +254,18 @@ class DatasetUtil:
         """
 
         if n_masks <= 8:
-            return np.uint8
+            return numpy.uint8
         elif n_masks <= 16:
-            return np.uint16
+            return numpy.uint16
         elif n_masks <= 32:
-            return np.uint32
+            return numpy.uint32
         else:
-            return np.uint64
+            return numpy.uint64
 
     @staticmethod
     def add_encoding(
         variable: xarray.Variable,
-        dtype: np.typecodes,
+        dtype: numpy.typecodes,
         scale_factor: Optional[float] = 1.0,
         offset: Optional[float] = 0.0,
         fill_value: Optional[Union[int, float]] = None,
@@ -315,7 +299,7 @@ class DatasetUtil:
         variable.encoding = encoding_dict
 
     @staticmethod
-    def get_default_fill_value(dtype: np.typecodes) -> Union[int, float]:
+    def get_default_fill_value(dtype: numpy.typecodes) -> Union[int, float]:
         """
         Returns default fill_value for given data type
 
@@ -324,24 +308,24 @@ class DatasetUtil:
         :return: CF-conforming fill value
         """
 
-        if dtype == np.int8:
-            return np.int8(-127)
-        if dtype == np.uint8:
-            return np.uint8(-1)
-        elif dtype == np.int16:
-            return np.int16(-32767)
-        elif dtype == np.uint16:
-            return np.uint16(-1)
-        elif dtype == np.int32:
-            return np.int32(-2147483647)
-        elif dtype == np.uint32:
-            return np.uint32(-1)
-        elif dtype == np.int64:
-            return np.int64(-9223372036854775806)
-        elif dtype == np.float32:
-            return np.float32(9.96921e36)
-        elif dtype == np.float64:
-            return np.float64(9.969209968386869e36)
+        if dtype == numpy.int8:
+            return numpy.int8(-127)
+        if dtype == numpy.uint8:
+            return numpy.uint8(-1)
+        elif dtype == numpy.int16:
+            return numpy.int16(-32767)
+        elif dtype == numpy.uint16:
+            return numpy.uint16(-1)
+        elif dtype == numpy.int32:
+            return numpy.int32(-2147483647)
+        elif dtype == numpy.uint32:
+            return numpy.uint32(-1)
+        elif dtype == numpy.int64:
+            return numpy.int64(-9223372036854775806)
+        elif dtype == numpy.float32:
+            return numpy.float32(9.96921e36)
+        elif dtype == numpy.float64:
+            return numpy.float64(9.969209968386869e36)
 
 
 if __name__ == "__main__":
