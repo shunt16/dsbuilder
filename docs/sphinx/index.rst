@@ -40,19 +40,20 @@ A simple dataset containing a radiance image may be built as follows:
 
    ds.to_netcdf("path/to/file.nc")
 
-**dsbuilder** is developed within Earth observation community, so it is designed with adhering to the `cf conventions <https://cfconventions.org>`_ particularly in mind. Eventually, **dsbuilder** will do this more automatically.
+**dsbuilder** is developed within Earth Observation metrology community, so it is designed with adhering to the `cf conventions <https://cfconventions.org>`_ particularly in mind. Eventually, **dsbuilder** will do this more automatically.
 
-For more information see the User Guide and API Reference documentation.
-
-.. toctree::
-   :maxdepth: 2
-   :caption: User Guide
-
-   content/quickstart
+For more information see the Users and Developer documentation.
 
 .. toctree::
    :maxdepth: 2
-   :caption: API Reference
+   :caption: For Users
+
+   content/user/getting_started
+   content/user/user_guide
+
+.. toctree::
+   :maxdepth: 2
+   :caption: For Developers
 
    content/API/dsbuilder
 

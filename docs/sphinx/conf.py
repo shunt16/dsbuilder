@@ -65,8 +65,14 @@ def setup(app):
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
+    "sphinx.ext.intersphinx",
     "sphinx_autodoc_typehints"
 ]
+
+intersphinx_mapping = {
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "xarray": ("http://xarray.pydata.org/en/stable/", None)
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
