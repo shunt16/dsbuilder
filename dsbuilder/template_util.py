@@ -63,13 +63,14 @@ def create_template_dataset(
                 "dtype": np.int16,
                 "dim": ["x", "y", "time"],
                 "attrs": {"units": "%"},
-                "err_corr": {
-                    "x": {
+                "err_corr": [
+                    {
+                        "dim": "x",
                         "form": "systematic",
                         "params": [],
                         "units": []
                     }
-                }
+                ]
             },
             "quality_flag_time": {
                 "dtype": "flag",

@@ -181,53 +181,56 @@ class TestDatasetUtil(unittest.TestCase):
         self.assertEqual("std", array_variable.attrs["standard_name"])
 
     def test_create_unc_variable(self):
-        err_corr = {
-            "x": {
+        err_corr = [
+            {
+                "dim": "x",
                 "form": "rectangle_absolute",
                 "params": [1, 2],
                 "units": ["m", "m"]
             },
-            "y": {
-                "form": "random",
+            {
+                "dim": ["y", "z"],
+                "form": "systematic",
                 "params": [],
                 "units": []
             }
-        }
+        ]
 
         unc_variable = DatasetUtil.create_unc_variable(
-            [7, 8, 3],
+            [7, 8, 3, 5],
             np.int8,
-            ["x", "y", "z"],
+            ["x", "y", "z", "a"],
             pdf_shape="gaussian",
             err_corr=err_corr
         )
 
         expected_attrs = {
-            "err_corr_dim1_name": "x",
-            "err_corr_dim1_form": "rectangle_absolute",
-            "err_corr_dim1_units": ['m', 'm'],
-            "err_corr_dim1_params": [1, 2],
-            "err_corr_dim2_name": "y",
-            "err_corr_dim2_form": "random",
-            "err_corr_dim2_units": [],
-            "err_corr_dim2_params": [],
-            "err_corr_dim3_name": "z",
-            "err_corr_dim3_form": "random",
-            "err_corr_dim3_units": [],
-            "err_corr_dim3_params": [],
+            "err_corr_1_dim": "x",
+            "err_corr_1_form": "rectangle_absolute",
+            "err_corr_1_units": ['m', 'm'],
+            "err_corr_1_params": [1, 2],
+            "err_corr_2_dim": ["y", "z"],
+            "err_corr_2_form": "systematic",
+            "err_corr_2_units": [],
+            "err_corr_2_params": [],
+            "err_corr_3_dim": "a",
+            "err_corr_3_form": "random",
+            "err_corr_3_units": [],
+            "err_corr_3_params": [],
             "pdf_shape": "gaussian"
          }
 
         self.assertTrue(expected_attrs.items() <= unc_variable.attrs.items())
 
     def test_create_unc_variable_incorrect_n_fiduceo_params(self):
-        err_corr = {
-            "x": {
+        err_corr = [
+            {
+                "dim": "x",
                 "form": "rectangle_absolute",
                 "params": [1, 2, 3],
-                "units": ["m", "m"]
-            },
-        }
+                "units": ["m", "m", "m"]
+            }
+        ]
 
         self.assertRaises(
             ValueError,
